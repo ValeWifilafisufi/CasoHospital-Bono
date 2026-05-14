@@ -1,0 +1,38 @@
+package CasoHospital.Bono.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table
+
+public class Bono {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long nro_folio;
+
+    @Column(name = "monto_copago", nullable = false)
+    private BigDecimal montoCopago;
+
+    @Column(name = "monto_seguro", nullable = false)
+    private BigDecimal montoSeguro;
+
+    @Column(name = "fecha_emison", nullable = false)
+    private LocalDate fechaEmision;
+
+    @Column(name = "codigo_prevision", nullable = false)
+    private Long codPrevision;
+
+    @Column(name = "num_run", nullable = false)
+    private String run;
+
+}
