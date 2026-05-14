@@ -8,8 +8,6 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -35,7 +33,7 @@ public class BonoRequestDto {
     @Positive(message = "El codigo de prevision debe ser mayor a 0")
     private Long codPrevision;
 
-    @NotBlank(message = "El numero de rut del paciente no puede estar vacio")
+    @NotNull(message = "El numero de rut del paciente no puede estar vacio")
     @Pattern(
             regexp = "^[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{3}-[0-9kK]$",
             message = "El run debe tener formato 12.345.678-9"

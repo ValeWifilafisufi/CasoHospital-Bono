@@ -18,7 +18,7 @@ public class Bono {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long nro_folio;
+    private Long nroFolio;
 
     @Column(name = "monto_copago", nullable = false)
     private BigDecimal montoCopago;

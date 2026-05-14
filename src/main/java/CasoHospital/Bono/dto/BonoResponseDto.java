@@ -1,16 +1,19 @@
 package CasoHospital.Bono.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+
 public class BonoResponseDto {
 
-    private Long nro_folio;
+    private Long nroFolio;
     private BigDecimal montoCopago;
     private BigDecimal montoSeguro;
     private LocalDate fechaEmision;
