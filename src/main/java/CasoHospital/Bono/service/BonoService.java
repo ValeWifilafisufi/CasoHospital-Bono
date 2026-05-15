@@ -1,5 +1,6 @@
 package CasoHospital.Bono.service;
 
+import CasoHospital.Bono.dto.BonoRequestDto;
 import CasoHospital.Bono.dto.BonoResponseDto;
 import CasoHospital.Bono.model.Bono;
 import CasoHospital.Bono.repository.BonoRepository;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,7 +24,7 @@ public class BonoService {
     private BonoResponseDto mapToDto(Bono bono){
 
         return new BonoResponseDto(
-                bono.getNro_folio(),
+                bono.getNroFolio(),
                 bono.getMontoCopago(),
                 bono.getMontoSeguro(),
                 bono.getFechaEmision(),
@@ -80,4 +82,18 @@ public class BonoService {
 
         return mapToDto(bonoGuardado);
     }
+    //Actualizar
+    public Optional<Bono> actualizar(Long folio, Bono bono){
+        return bonoRepository.findById(folio).map(existente ->
+        {existente.setMontoCopago(bono.getMontoCopago());
+            existente.setMontoSeguro(bono.getMontoSeguro());
+            existente.setFechaEmision(bono.getFechaEmision());
+
+            return bonoRepository.save(existente);
+        });
+    }
+
+    //Eliminar
+    public void eliminar(Long folio){bonoRepository.deleteById(folio);}
+
 }
