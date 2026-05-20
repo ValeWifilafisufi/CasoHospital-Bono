@@ -25,7 +25,7 @@ public class BonoRequestDto {
     @Positive(message = "El monto del seguro debe ser mayor a 0")
     private BigDecimal montoSeguro;
 
-    @NotBlank(message = "La fecha de emision no puede estar vacia")
+    @NotNull(message = "La fecha de emision no puede estar vacia")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate fechaEmision;
 
@@ -33,7 +33,7 @@ public class BonoRequestDto {
     @Positive(message = "El codigo de prevision debe ser mayor a 0")
     private Long codPrevision;
 
-    @NotNull(message = "El numero de rut del paciente no puede estar vacio")
+    @NotBlank(message = "El numero de rut del paciente no puede estar vacio")
     @Pattern(
             regexp = "^[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{3}-[0-9kK]$",
             message = "El run debe tener formato 12.345.678-9"

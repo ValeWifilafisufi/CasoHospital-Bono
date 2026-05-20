@@ -26,7 +26,7 @@ public class Bono {
     @Column(name = "monto_seguro", nullable = false)
     private BigDecimal montoSeguro;
 
-    @Column(name = "fecha_emison", nullable = false)
+    @Column(name = "fecha_emision", nullable = false)
     private LocalDate fechaEmision;
 
     @Column(name = "codigo_prevision", nullable = false)

@@ -1,7 +1,8 @@
 package CasoHospital.Bono.controller;
 
-
+import CasoHospital.Bono.dto.BonoRequestDto;
 import CasoHospital.Bono.dto.BonoResponseDto;
+import CasoHospital.Bono.model.Bono;
 import CasoHospital.Bono.service.BonoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,54 +15,70 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bono")
 @RequiredArgsConstructor
-
 public class BonoController {
+
     private final BonoService bonoService;
 
     @GetMapping
-    public ResponseEntity<List<BonoResponseDto>> obtenerTod(){
+    public ResponseEntity<List<BonoResponseDto>> obtenerTodos(){
         return ResponseEntity.ok(bonoService.obtenerTodos());
     }
 
     @GetMapping("/folio/{folio}")
-    public ResponseEntity<BonoResponseDto> buscarPorFolio(@PathVariable Long folio){
-        return bonoService.buscarPorFolio(folio).map(ResponseEntity::ok)
+    public ResponseEntity<BonoResponseDto> buscarPorFolio(
+            @PathVariable Long folio){
+
+        return bonoService.buscarPorFolio(folio)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/fecha/{fecha}")
-    public ResponseEntity<List<BonoResponseDto>> buscarPorFecha(@PathVariable LocalDate fecha){
-        return ResponseEntity.ok(bonoService.buscarPorFecha(fecha));
+    public ResponseEntity<List<BonoResponseDto>> buscarPorFecha(
+            @PathVariable LocalDate fecha){
+
+        return ResponseEntity.ok(
+                bonoService.buscarPorFecha(fecha));
     }
 
     @GetMapping("/run/{run}")
-    public ResponseEntity<List<BonoResponseDto>> buscarPorRun(@PathVariable String run){
-        return ResponseEntity.ok(bonoService.buscarPorRun(run));
-//    }
-//    @GetMapping("/fecha/{fecha}")
-//    public ResponseEntity<List<CitaMedicaResponseDto>> buscarPorFecha(@PathVariable LocalDate fecha){
-//        return ResponseEntity.ok(citaMedicaService.buscarPorCita(fecha));
-//    }
+    public ResponseEntity<List<BonoResponseDto>> buscarPorRun(
+            @PathVariable String run){
+
+        return ResponseEntity.ok(
+                bonoService.buscarPorRun(run));
+    }
 
     @PostMapping
-    public ResponseEntity<CitaMedicaResponseDto> crear(@Valid @RequestBody CitaMedicaRequestDto dto){
-        CitaMedicaResponseDto respuesta = citaMedicaService.guardar(dto);
+    public ResponseEntity<BonoResponseDto> crear(
+            @Valid @RequestBody BonoRequestDto dto){
+
+        BonoResponseDto respuesta =
+                bonoService.guardar(dto);
+
         return ResponseEntity.status(201).body(respuesta);
     }
 
-    @PutMapping("{nro}")
-    public ResponseEntity<CitaMedica> actualizar(@PathVariable Long nro,
-                                                 @Valid @RequestBody CitaMedica cita){
-        return citaMedicaService.actualizar(nro, cita).map(ResponseEntity::ok)
+    @PutMapping("/{folio}")
+    public ResponseEntity<Bono> actualizar(
+            @PathVariable Long folio,
+            @Valid @RequestBody Bono bono){
+
+        return bonoService.actualizar(folio, bono)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("{nro}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long nro){
-        if (citaMedicaService.buscarPorNroCita(nro).isEmpty()){
+    @DeleteMapping("/{folio}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long folio){
+
+        if (bonoService.buscarPorFolio(folio).isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        citaMedicaService.eliminar(nro);
+
+        bonoService.eliminar(folio);
+
         return ResponseEntity.noContent().build();
     }
 }
