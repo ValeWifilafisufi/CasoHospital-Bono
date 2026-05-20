@@ -26,7 +26,7 @@ public class BonoRequestDto {
     private BigDecimal montoSeguro;
 
     @NotNull(message = "La fecha de emision no puede estar vacia")
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaEmision;
 
     @NotNull(message = "El codigo de prevision no puede estar vacio")

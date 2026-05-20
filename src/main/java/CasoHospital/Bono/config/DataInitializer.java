@@ -26,7 +26,7 @@ public class DataInitializer implements CommandLineRunner {
         log.info(">>> DataInitializer: BD vacía detectada, insertando datos de prueba...");
 
         bonoRepository.save(new Bono(null,new BigDecimal("12000"),
-                new BigDecimal("35000"),LocalDate.of(2026, 5, 10),
+                new BigDecimal("35000"),LocalDate.of(2026, 5,10),
                 1L,"22.359.190-6"));
 
         bonoRepository.save(new Bono(null,new BigDecimal("8500"),

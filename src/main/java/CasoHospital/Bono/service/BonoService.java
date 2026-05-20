@@ -4,6 +4,8 @@ import CasoHospital.Bono.dto.BonoRequestDto;
 import CasoHospital.Bono.dto.BonoResponseDto;
 import CasoHospital.Bono.model.Bono;
 import CasoHospital.Bono.repository.BonoRepository;
+import CasoHospital.Bono.webclient.PacienteClient;
+import CasoHospital.Bono.webclient.PrevisionClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
