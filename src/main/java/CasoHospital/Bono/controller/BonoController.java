@@ -4,6 +4,8 @@ import CasoHospital.Bono.dto.BonoRequestDto;
 import CasoHospital.Bono.dto.BonoResponseDto;
 import CasoHospital.Bono.model.Bono;
 import CasoHospital.Bono.service.BonoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +17,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bono")
 @RequiredArgsConstructor
+@Tag(value = (name = "Staff", description = "Operaciones relacionadas con el Staff")
 public class BonoController {
 
     private final BonoService bonoService;
 
     @GetMapping
+    @Operation(summary = "Obtener todos los staff", description = "Obtiene una lista con todos los staff ingresados")
     public ResponseEntity<List<BonoResponseDto>> obtenerTodos(){
         return ResponseEntity.ok(bonoService.obtenerTodos());
     }
