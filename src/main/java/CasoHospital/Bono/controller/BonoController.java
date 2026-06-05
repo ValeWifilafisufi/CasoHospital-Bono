@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bono")
 @RequiredArgsConstructor
-@Tag(value = (name = "Staff", description = "Operaciones relacionadas con el Staff")
+@Tag(name = "Staff", description = "Operaciones relacionadas con el Staff")
 public class BonoController {
 
     private final BonoService bonoService;
