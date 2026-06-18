@@ -12,8 +12,8 @@ public class SwaggerConfig {
     public OpenAPI customOpenApi(){
         return new OpenAPI()
                 .info(new Info()
-                        .title("API 2026 Staff")
+                        .title("API 2026 Bono")
                         .version("1.0")
-                        .description("Documentacion de la API para el sistema de Staff"));
+                        .description("Documentacion de la API para el sistema de Bono"));
     }
 }
