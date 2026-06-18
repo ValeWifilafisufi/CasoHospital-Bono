@@ -1,88 +1,133 @@
 package CasoHospital.Bono.controller;
 
+import CasoHospital.Bono.assemblers.BonoModelAssemblers;
 import CasoHospital.Bono.dto.BonoRequestDto;
 import CasoHospital.Bono.dto.BonoResponseDto;
-import CasoHospital.Bono.model.Bono;
 import CasoHospital.Bono.service.BonoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/bono")
 @RequiredArgsConstructor
-@Tag(name = "Bono", description = "Endpoints para dministrar el sistema de Bonos del hospital")
+@Tag(name = "Gestión de Bonos", description = "Endpoints para administrar el sistema de Bonos del Hospital")
 public class BonoController {
 
     private final BonoService bonoService;
+    private final BonoModelAssemblers assembler;
 
+    //----------------- OBTENER TODOS LOS BONOS (PAGINADO) -----------------
+    @Operation(summary = "Obtener todos los bonos", description = "Retorna una lista con todos los bonos registrados en el sistema")
     @GetMapping
-    @Operation(summary = "Obtener todos los staff", description = "Obtiene una lista con todos los staff ingresados")
-    public ResponseEntity<List<BonoResponseDto>> obtenerTodos(){
-        return ResponseEntity.ok(bonoService.obtenerTodos());
+    public ResponseEntity<PagedModel<EntityModel<BonoResponseDto>>> obtenerTodos(
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            PagedResourcesAssembler<BonoResponseDto> pagedAssembler) {
+
+        Page<BonoResponseDto> paginaBono = bonoService.obtener(pageable);
+        return ResponseEntity.ok(pagedAssembler.toModel(paginaBono, assembler));
     }
 
+    //----------------- BUSCAR POR FOLIO -----------------
+    @Operation(summary = "Obtener bono por folio", description = "Retorna la información de un bono específico mediante su número de folio")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Bono encontrado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "El número de folio no corresponde a ningún bono")
+    })
     @GetMapping("/folio/{folio}")
-    public ResponseEntity<BonoResponseDto> buscarPorFolio(
-            @PathVariable Long folio){
+    public ResponseEntity<EntityModel<BonoResponseDto>> obtenerPorFolio(
+            @Parameter(description = "Número de folio del bono a buscar", example = "1001") @PathVariable Long folio) {
 
-        return bonoService.buscarPorFolio(folio)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        BonoResponseDto bono = bonoService.obtenerPorFolio(folio);
+        return ResponseEntity.ok(assembler.toModel(bono));
     }
 
+    //----------------- BUSCAR POR FECHA (PAGINADO) -----------------
+    @Operation(summary = "Buscar bonos por fecha de emisión", description = "Retorna una lista de bonos emitidos en una fecha específica")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Bonos encontrados exitosamente"),
+            @ApiResponse(responseCode = "404", description = "No se encontraron bonos en la fecha indicada")
+    })
     @GetMapping("/fecha/{fecha}")
-    public ResponseEntity<List<BonoResponseDto>> buscarPorFecha(
-            @PathVariable LocalDate fecha){
+    public ResponseEntity<PagedModel<EntityModel<BonoResponseDto>>> buscarPorFecha(
+            @PathVariable LocalDate fecha,
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            PagedResourcesAssembler<BonoResponseDto> pagedAssembler) {
 
-        return ResponseEntity.ok(
-                bonoService.buscarPorFecha(fecha));
+        Page<BonoResponseDto> pagina = bonoService.buscarPorFecha(fecha, pageable);
+        return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
+    //----------------- BUSCAR POR RUN PACIENTE (PAGINADO) -----------------
+    @Operation(summary = "Buscar bonos por RUN de paciente", description = "Retorna una lista de bonos asociados al RUN de un paciente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Bonos encontrados exitosamente"),
+            @ApiResponse(responseCode = "404", description = "No existen bonos registrados para el RUN ingresado")
+    })
     @GetMapping("/run/{run}")
-    public ResponseEntity<List<BonoResponseDto>> buscarPorRun(
-            @PathVariable String run){
+    public ResponseEntity<PagedModel<EntityModel<BonoResponseDto>>> buscarPorRun(
+            @PathVariable String run,
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            PagedResourcesAssembler<BonoResponseDto> pagedAssembler) {
 
-        return ResponseEntity.ok(
-                bonoService.buscarPorRun(run));
+        Page<Page<BonoResponseDto>> pagina = bonoService.buscarPorRun(run, pageable);
+        return ResponseEntity.ok(pagedAssembler.toModel(pagina, assembler));
     }
 
+    //----------------- GUARDAR/CREAR BONO -----------------
+    @Operation(summary = "Emitir un nuevo bono", description = "Registra un bono en el sistema validando previamente al Paciente y su Previsión")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Bono emitido y creado correctamente"),
+            @ApiResponse(responseCode = "404", description = "El RUN del paciente o el código de previsión no existen")
+    })
     @PostMapping
-    public ResponseEntity<BonoResponseDto> crear(
-            @Valid @RequestBody BonoRequestDto dto){
+    public ResponseEntity<EntityModel<BonoResponseDto>> guardar(
+            @Valid @RequestBody BonoRequestDto dto) {
 
-        BonoResponseDto respuesta =
-                bonoService.guardar(dto);
-
-        return ResponseEntity.status(201).body(respuesta);
+        BonoResponseDto bonoGuardado = bonoService.guardar(dto);
+        return ResponseEntity.status(201).body(assembler.toModel(bonoGuardado));
     }
 
+    //----------------- ACTUALIZAR BONO -----------------
+    @Operation(summary = "Actualizar datos de un bono", description = "Modifica los datos financieros o de fecha de un bono existente mediante su folio")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Bono actualizado con éxito"),
+            @ApiResponse(responseCode = "404", description = "El número de folio no coincide con ningún bono")
+    })
     @PutMapping("/{folio}")
-    public ResponseEntity<Bono> actualizar(
-            @PathVariable Long folio,
-            @Valid @RequestBody Bono bono){
+    public ResponseEntity<EntityModel<BonoResponseDto>> actualizar(
+            @Parameter(description = "Número de folio del bono a actualizar", example = "1001") @PathVariable Long folio,
+            @Valid @RequestBody BonoRequestDto dto) {
 
-        return bonoService.actualizar(folio, bono)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        BonoResponseDto bonoActualizado = bonoService.actualizar(folio, dto);
+        return ResponseEntity.ok(assembler.toModel(bonoActualizado));
     }
 
+    //----------------- ELIMINAR BONO -----------------
+    @Operation(summary = "Eliminar un bono del sistema", description = "Remueve permanentemente un bono mediante su número de folio")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Bono eliminado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "El número de folio ingresado no existe")
+    })
     @DeleteMapping("/{folio}")
     public ResponseEntity<Void> eliminar(
-            @PathVariable Long folio){
-
-        if (bonoService.buscarPorFolio(folio).isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
+            @Parameter(description = "Número de folio del bono a eliminar", example = "1001") @PathVariable Long folio) {
 
         bonoService.eliminar(folio);
-
         return ResponseEntity.noContent().build();
     }
 }
