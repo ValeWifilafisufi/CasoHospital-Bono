@@ -1,5 +1,7 @@
 package CasoHospital.Bono.config;
 
+import CasoHospital.Bono.security.JwtAuthFilter;
+import CasoHospital.Bono.security.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailService userDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -56,7 +58,7 @@ public class SecurityConfig {
                                 "/doc/swagger-ui/**",
                                 "/auth/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/habitacion", "/api/habitacion/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/bono", "/api/bono/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

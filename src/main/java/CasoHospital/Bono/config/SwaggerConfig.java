@@ -17,7 +17,6 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenApi() {
         return new OpenAPI()
-                // Redirige las peticiones a través del API Gateway común
                 .addServersItem(new Server().url("http://localhost:8500"))
                 .info(new Info()
                         .title("API de Bonos")

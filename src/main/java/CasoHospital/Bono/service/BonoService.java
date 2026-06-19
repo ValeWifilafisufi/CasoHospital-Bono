@@ -1,10 +1,10 @@
+package CasoHospital.Bono.service;
 import CasoHospital.Bono.dto.BonoRequestDto;
 import CasoHospital.Bono.dto.BonoResponseDto;
 import CasoHospital.Bono.exception.RecursoNoEncontradoException;
 import CasoHospital.Bono.model.Bono;
 import CasoHospital.Bono.repository.BonoRepository;
 import CasoHospital.Bono.webclient.PacienteClient;
-import CasoHospital.Bono.webclient.PrevisionClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +21,6 @@ public class BonoService {
 
     private final BonoRepository bonoRepository;
     private final PacienteClient pacienteClient;
-    private final PrevisionClient previsionClient;
 
     public BonoResponseDto mapToDto(Bono bono) {
         return new BonoResponseDto(
@@ -29,7 +28,7 @@ public class BonoService {
                 bono.getMontoCopago(),
                 bono.getMontoSeguro(),
                 bono.getFechaEmision(),
-                bono.getCodPrevision(),
+                bono.getNombrePrevision(),
                 bono.getRun()
         );
     }
@@ -66,16 +65,15 @@ public class BonoService {
         if (paciente == null) {
             throw new RecursoNoEncontradoException("Paciente con RUN " + dto.getRun() + " no encontrado en el sistema");
         }
-        Map<String, Object> prevision = previsionClient.obtenerPrevision(dto.getCodPrevision());
-        if (prevision == null) {
-            throw new RecursoNoEncontradoException("Previsión con código " + dto.getCodPrevision() + " no encontrada en el sistema");
-        }
+        Object nombrePrevisionObj = paciente.get("nombrePrevision");
+        String nombrePrevision = (nombrePrevisionObj != null) ? nombrePrevisionObj.toString() : "Sin Previsión";
 
         Bono nuevoBono = new Bono();
         nuevoBono.setMontoCopago(dto.getMontoCopago());
         nuevoBono.setMontoSeguro(dto.getMontoSeguro());
         nuevoBono.setFechaEmision(dto.getFechaEmision());
-
+        nuevoBono.setRun(dto.getRun());
+        nuevoBono.setNombrePrevision(nombrePrevision);
         return mapToDto(bonoRepository.save(nuevoBono));
     }
 
@@ -84,11 +82,17 @@ public class BonoService {
         Bono existente = bonoRepository.findById(folio)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe un bono con el folio " + folio));
 
+        Map<String, Object> paciente = pacienteClient.obtenerPaciente(dto.getRun());
+        if (paciente == null) {
+            throw new RecursoNoEncontradoException("Paciente con RUN " + dto.getRun() + " no encontrado en el sistema");
+        }
+        Object nombrePrevisionObj = paciente.get("nombrePrevision");
+        String nombrePrevision = (nombrePrevisionObj != null) ? nombrePrevisionObj.toString() : "Sin Previsión";
         existente.setMontoCopago(dto.getMontoCopago());
         existente.setMontoSeguro(dto.getMontoSeguro());
         existente.setFechaEmision(dto.getFechaEmision());
-        existente.setCodPrevision(dto.getCodPrevision());
         existente.setRun(dto.getRun());
+        existente.setNombrePrevision(nombrePrevision);
 
         return mapToDto(bonoRepository.save(existente));
     }

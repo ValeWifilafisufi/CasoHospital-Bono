@@ -12,8 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table
-
+@Table(name = "Bono")
 public class Bono {
 
     @Id
@@ -29,8 +28,8 @@ public class Bono {
     @Column(name = "fecha_emision", nullable = false)
     private LocalDate fechaEmision;
 
-    @Column(name = "codigo_prevision", nullable = false)
-    private Long codPrevision;
+    @Column(name = "nombre_prevision", nullable = false)
+    private String nombrePrevision;
 
     @Column(name = "num_run", nullable = false)
     private String run;

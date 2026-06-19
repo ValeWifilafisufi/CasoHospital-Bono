@@ -1,6 +1,6 @@
 package CasoHospital.Bono.model;
 
-public class Role {
+public enum Role {
     USER,
     ADMIN
 }

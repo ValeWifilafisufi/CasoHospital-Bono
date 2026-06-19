@@ -1,13 +1,19 @@
 package CasoHospital.Bono.service;
 
+import CasoHospital.Bono.dto.AuthRequest;
+import CasoHospital.Bono.dto.AuthResponse;
 import CasoHospital.Bono.model.Role;
 import CasoHospital.Bono.model.User;
 import CasoHospital.Bono.repository.UserRepository;
 import CasoHospital.Bono.security.JwtService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
